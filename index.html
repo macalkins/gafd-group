@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAFD Group — CU Boulder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0f2044;
+      --navy-light: #1a3563;
+      --teal: #0d9488;
+      --teal-light: #5eead4;
+      --amber: #b45309;
+      --bg: #f8f9fb;
+      --white: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3rem; height: 64px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand { font-family: 'Source Serif 4', serif; font-size: 1rem; color: var(--navy); text-decoration: none; font-weight: 600; }
+    .nav-cu { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em; color: var(--amber); text-transform: uppercase; margin-left: 0.75rem; padding: 0.15rem 0.5rem; border: 1px solid currentColor; border-radius: 3px; text-decoration: none; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--teal); }
+
+    /* ── HERO ── */
+    .hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; align-items: center; overflow: hidden; }
+    .hero-left { padding: 8rem 3rem 5rem 3rem; background: var(--white); }
+    .hero-right { position: relative; min-height: 100vh; background: linear-gradient(160deg, var(--navy) 0%, #0a3060 40%, #053354 70%, #042845 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .hero-right-pattern { position: absolute; inset: 0; background-image: radial-gradient(circle at 30% 70%, rgba(13,148,136,0.2) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(45,212,191,0.1) 0%, transparent 40%); }
+    .hero-right-content { position: absolute; inset: 0; z-index: 2; }
+    #flow-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .hero-eyebrow { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 1rem; }
+    .hero h1 { font-family: 'Source Serif 4', serif; font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 600; line-height: 1.2; color: var(--navy); margin-bottom: 1.5rem; }
+    .hero-desc { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.85; max-width: 480px; }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn { padding: 0.75rem 1.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: all 0.2s; display: inline-block; }
+    .btn-primary { background: var(--teal); color: #fff; }
+    .btn-primary:hover { background: #0f766e; transform: translateY(-1px); }
+    .btn-ghost { border: 1.5px solid var(--border); color: var(--text-muted); }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+
+    /* ── SHARED ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 6rem 3rem; }
+    .section-tag { display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal); background: rgba(13,148,136,0.08); padding: 0.3rem 0.75rem; border-radius: 99px; margin-bottom: 1rem; }
+    .section-title { font-family: 'Source Serif 4', serif; font-size: clamp(1.6rem, 2.5vw, 2.1rem); font-weight: 600; color: var(--navy); margin-bottom: 1rem; }
+    .section-body { font-size: 1rem; color: var(--text-muted); max-width: 620px; line-height: 1.85; }
+
+    /* ── RESEARCH ── */
+    .research-section { background: var(--white); }
+    .research-intro { margin-bottom: 3rem; }
+    .sim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .sim-slot { border-radius: 10px; overflow: hidden; background: var(--bg); border: 1px solid var(--border); }
+    .sim-slot video, .sim-slot img, .sim-slot iframe { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; border: none; }
+    .sim-placeholder { aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #e8edf5, #dce3ee); color: var(--text-muted); gap: 0.5rem; }
+    .sim-placeholder svg { opacity: 0.35; }
+    .sim-placeholder span { font-size: 0.78rem; opacity: 0.6; letter-spacing: 0.04em; }
+    .sim-caption { padding: 0.75rem 1rem; font-size: 0.82rem; color: var(--text-muted); border-top: 1px solid var(--border); }
+    .sim-caption strong { color: var(--navy); font-weight: 500; }
+
+    /* ── PEOPLE ── */
+    .people-section { background: var(--bg); }
+    .people-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-top: 3rem; }
+    .person-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 2rem 1.5rem; text-align: center; transition: box-shadow 0.2s; }
+    .person-card:hover { box-shadow: 0 6px 24px rgba(15,32,68,0.08); }
+    .person-photo-wrap { width: 88px; height: 88px; border-radius: 50%; margin: 0 auto 1rem; overflow: hidden; background: linear-gradient(135deg, var(--navy-light), var(--teal)); display: flex; align-items: center; justify-content: center; }
+    .person-photo-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+    .person-initials { font-size: 1.25rem; font-weight: 700; color: #fff; font-family: 'Source Serif 4', serif; line-height: 1; }
+    .person-card h3 { font-size: 0.95rem; font-weight: 600; color: var(--navy); margin-bottom: 0.2rem; }
+    .person-role { font-size: 0.78rem; color: var(--teal); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .person-focus { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+    /* Past members */
+    .past-members { margin-top: 3.5rem; padding-top: 2.5rem; border-top: 1px solid var(--border); }
+    .past-members h3 { font-family: 'Source Serif 4', serif; font-size: 1.1rem; color: var(--navy); margin-bottom: 1.25rem; }
+    .past-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .past-item { display: flex; gap: 1rem; font-size: 0.9rem; }
+    .past-name { font-weight: 500; color: var(--text); min-width: 160px; }
+    .past-role { color: var(--text-muted); }
+
+    /* ── GALLERY ── */
+    .gallery-section { background: var(--white); }
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 3rem; }
+    .gallery-grid .gallery-wide { grid-column: span 2; }
+    .gallery-item { border-radius: 10px; overflow: hidden; background: var(--bg); border: 1px solid var(--border); aspect-ratio: 4/3; position: relative; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+    .gallery-item:hover img { transform: scale(1.03); }
+    .gallery-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #e8edf5, #dce3ee); color: var(--text-muted); gap: 0.5rem; font-size: 0.78rem; letter-spacing: 0.04em; opacity: 0.7; }
+
+    /* ── RECENT HIGHLIGHTS ── */
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .highlight-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: box-shadow 0.2s, transform 0.2s;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+    }
+    .highlight-card:hover { box-shadow: 0 8px 32px rgba(15,32,68,0.1); transform: translateY(-3px); }
+    .highlight-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+      background: #dce3ee;
+    }
+    .highlight-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+    .highlight-journal {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.6rem;
+    }
+    .highlight-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.4;
+      margin-bottom: 0.6rem;
+    }
+    .highlight-authors { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem; flex: 1; }
+    .highlight-link {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--teal);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ── PUBLICATIONS ── */
+    .pub-section { background: var(--bg); }
+    .scholar-link { display: inline-flex; align-items: center; gap: 0.6rem; margin-top: 2rem; padding: 0.9rem 1.75rem; background: var(--navy); color: #fff; border-radius: 8px; font-size: 0.925rem; font-weight: 500; text-decoration: none; transition: background 0.2s, transform 0.2s; }
+    .scholar-link:hover { background: var(--navy-light); transform: translateY(-1px); }
+
+    /* ── JOBS ── */
+    .jobs-section { background: var(--navy); }
+    .jobs-section .container { padding: 5rem 3rem; }
+    .jobs-section .section-tag { color: var(--teal-light); background: rgba(94,234,212,0.1); }
+    .jobs-section .section-title { color: #fff; }
+    .jobs-section .section-body { color: rgba(255,255,255,0.6); max-width: 100%; }
+    .jobs-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 3rem; }
+    .jobs-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 2rem; transition: border-color 0.2s; }
+    .jobs-card:hover { border-color: var(--teal-light); }
+    .jobs-card h3 { font-size: 1rem; font-weight: 600; color: #fff; margin-bottom: 0.75rem; }
+    .jobs-card p { font-size: 0.875rem; color: rgba(255,255,255,0.55); line-height: 1.75; margin-bottom: 1.25rem; }
+    .btn-teal-outline { border: 1.5px solid var(--teal-light); color: var(--teal-light); padding: 0.6rem 1.4rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; display: inline-block; transition: background 0.2s; }
+    .btn-teal-outline:hover { background: rgba(94,234,212,0.1); }
+
+    /* ── FOOTER ── */
+    footer { background: #080f1a; padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.35); }
+    footer a { color: rgba(255,255,255,0.35); text-decoration: none; }
+    footer a:hover { color: var(--teal-light); }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div style="display:flex;align-items:center;">
+      <a class="nav-brand" href="#">GAFD Group</a>
+      <a class="nav-cu" href="https://www.colorado.edu/physics" target="_blank" rel="noopener noreferrer">CU Boulder - Dept. of Physics</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#research">Research</a></li>
+      <li><a href="#people">People</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#jobs">Join Us</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Geophysics · CU Boulder Physics</p>
+      <h1>Geophysical &amp; Astrophysical Fluid Dynamics</h1>
+      <p class="hero-desc">We study how fluids behave on and within planets and stars — using numerical simulation and theory to connect microscale turbulence to planetary-scale dynamics.</p>
+      <div class="hero-actions">
+        <a href="#research" class="btn btn-primary">Our Research</a>
+        <a href="#publications" class="btn btn-ghost">Publications</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-right-pattern"></div>
+      <div class="hero-right-content">
+        <canvas id="flow-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESEARCH -->
+  <div class="research-section" id="research">
+    <div class="container">
+      <div class="research-intro">
+        <span class="section-tag">What We Study</span>
+        <h2 class="section-title">Research</h2>
+        <p class="section-body">Our group uses numerical simulations and theory to understand fluid dynamical processes within planets and stars.</p>
+      </div>
+
+      <!--
+        SIMULATIONS — replace each .sim-placeholder with your media:
+        MP4:     <video autoplay loop muted playsinline><source src="images/sim.mp4" type="video/mp4"></video>
+        GIF:     <img src="images/sim.gif" alt="description">
+        YouTube: <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe>
+      -->
+      <div class="sim-grid">
+
+        <div class="sim-slot">
+          <img src="images/shell_slice_ur_e1e5r8x.png" alt="Shell slice simulation" />
+          <div class="sim-caption"><strong>Caption here</strong> — brief description.</div>
+        </div>
+
+        <div class="sim-slot">
+          <img src="images/butterfly.png" alt="Butterfly diagram" />
+          <div class="sim-caption"><strong>Caption here</strong> — brief description.</div>
+        </div>
+
+        <div class="sim-slot">
+          <img src="images/tempcrop1.png" alt="Temperature visualization" />
+          <div class="sim-caption"><strong>Caption here</strong> — brief description.</div>
+        </div>
+
+      </div>
+      <!-- RECENT HIGHLIGHTS -->
+      <div style="margin-top:4rem;">
+        <h3 style="font-family:'Source Serif 4',serif;font-size:1.25rem;font-weight:600;color:var(--navy);margin-bottom:0.5rem;">Recent Highlights</h3>
+        <p style="font-size:0.95rem;color:var(--text-muted);margin-bottom:0;">A selection of recent papers from the group.</p>
+        <div class="highlights-grid">
+
+          <a class="highlight-card" href="https://doi.org/10.1038/s43247-025-02451-6" target="_blank" rel="noopener noreferrer">
+            <img class="highlight-img" src="images/oliver_fig1.jpg" alt="Flow visualization from Oliver et al. 2025" />
+            <div class="highlight-body">
+              <p class="highlight-journal">Communications Earth &amp; Environment · 2025</p>
+              <p class="highlight-title">Turbulence in Earth's core generates large topographic torques on the mantle</p>
+              <p class="highlight-authors">Tobias G. Oliver, Eric G. Blackman, John A. Tarduno &amp; Michael A. Calkins</p>
+              <span class="highlight-link">Read paper ↗</span>
+            </div>
+          </a>
+
+          <a class="highlight-card" href="https://doi.org/10.1146/annurev-earth-111523-081635" target="_blank" rel="noopener noreferrer">
+            <img class="highlight-img" src="images/Soderlund.jpg" alt="Figure from Soderlund et al. 2025" />
+            <div class="highlight-body">
+              <p class="highlight-journal">Annual Review of Earth &amp; Planetary Sciences · 2025</p>
+              <p class="highlight-title">Puzzles in Planetary Dynamos: Implications for Planetary Interiors</p>
+              <p class="highlight-authors">Krista M. Soderlund, Sabine Stanley, Hao Cao, Michael A. Calkins &amp; Matthew K. Browning</p>
+              <span class="highlight-link">Read paper ↗</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PEOPLE -->
+  <div class="people-section" id="people">
+    <div class="container">
+      <span class="section-tag">The Team</span>
+      <h2 class="section-title">People</h2>
+      <p class="section-body">A collaborative group working at the intersection of geophysics, applied mathematics, and astrophysics.</p>
+
+      <div class="people-grid">
+
+        <div class="person-card">
+          <div class="person-photo-wrap">
+            <img src="images/mike.jpg" alt="Mike"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <span class="person-initials" style="display:none;">MC</span>
+          </div>
+          <h3>Michael Calkins</h3>
+          <p class="person-role">Principal Investigator</p>
+          <p class="person-focus">Associate Professor, Department of Physics</p>
+        </div>
+
+        <div class="person-card">
+          <div class="person-photo-wrap">
+            <img src="images/talal1.jpg" alt="Talal"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <span class="person-initials" style="display:none;">T</span>
+          </div>
+          <h3>Talal AlRefae</h3>
+          <p class="person-role">PhD Student</p>
+          <p class="person-focus">Magnetoconvection, rotating compressible convection</p>
+        </div>
+
+        <div class="person-card">
+          <div class="person-photo-wrap">
+            <img src="images/Tobias.jpg" alt="Tobias Oliver"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <span class="person-initials" style="display:none;">T</span>
+          </div>
+          <h3>Tobias Oliver</h3>
+          <p class="person-role">PhD Student</p>
+          <p class="person-focus">Rotating convection, topographic core-mantle coupling</p>
+        </div>
+
+      </div>
+
+      <!-- PAST MEMBERS -->
+      <div class="past-members">
+        <h3>Past Members</h3>
+        <div class="past-list">
+          <div class="past-item">
+            <span class="past-name">Stefano Maffei</span>
+            <span class="past-role">Postdoc → ETH Zurich</span>
+          </div>
+          <div class="past-item">
+            <span class="past-name">Meredith Plumley</span>
+            <span class="past-role">PhD Student</span>
+          </div>
+          <div class="past-item">
+            <span class="past-name">Justin Nicoski</span>
+            <span class="past-role">PhD Student</span>
+          </div>
+          <div class="past-item">
+            <span class="past-name">Ryan Orvedahl</span>
+            <span class="past-role">PhD Student → SciTec Inc.</span>
+          </div>
+          <div class="past-item">
+            <span class="past-name">Ming Yan</span>
+            <span class="past-role">PhD Student → Google</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="gallery-section" id="gallery">
+    <div class="container">
+      <span class="section-tag">The Group</span>
+      <h2 class="section-title">Gallery</h2>
+      <p class="section-body">Photos from the lab, fieldwork, and conferences.</p>
+      <div class="gallery-grid">
+
+        <div class="gallery-item gallery-wide">
+          <img src="images/group.jpeg" alt="Group photo" />
+        </div>
+
+        <div class="gallery-item">
+          <img src="images/meredithmountain.jpg" alt="Field photo" />
+        </div>
+
+        <div class="gallery-item">
+          <img src="images/meredithburro.jpg" alt="Field photo" />
+        </div>
+
+        <div class="gallery-item">
+          <div class="gallery-placeholder">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Add photo</span>
+          </div>
+        </div>
+
+        <div class="gallery-item">
+          <div class="gallery-placeholder">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Add photo</span>
+          </div>
+        </div>
+
+        <div class="gallery-item">
+          <div class="gallery-placeholder">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Add photo</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PUBLICATIONS -->
+  <div class="pub-section" id="publications">
+    <div class="container">
+      <span class="section-tag">Recent Work</span>
+      <h2 class="section-title">Publications</h2>
+      <p class="section-body">Our full list of publications — including papers, preprints, and citations — is available on Google Scholar.</p>
+      <a href="https://scholar.google.com/citations?user=7TMglN4AAAAJ&hl=en" target="_blank" rel="noopener noreferrer" class="scholar-link">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        View Publications on Google Scholar ↗
+      </a>
+    </div>
+  </div>
+
+  <!-- JOBS -->
+  <div class="jobs-section" id="jobs">
+    <div class="container">
+      <span class="section-tag">Join the Group</span>
+      <h2 class="section-title">Opportunities</h2>
+      <p class="section-body">We welcome motivated students and researchers at all levels who are excited about fluid dynamics, planetary science, or stellar physics.</p>
+      <div class="jobs-cards">
+        <div class="jobs-card">
+          <h3>Graduate Students</h3>
+          <p>Apply to the Physics PhD program at CU Boulder and mention our group in your statement.</p>
+          <a href="#" class="btn-teal-outline">Apply →</a>
+        </div>
+        <div class="jobs-card">
+          <h3>Postdoctoral Researchers</h3>
+          <p>We periodically have openings for postdocs. Send a CV and brief description of your research interests.</p>
+          <a href="#" class="btn-teal-outline">Get in Touch →</a>
+        </div>
+        <div class="jobs-card">
+          <h3>Undergraduate Students</h3>
+          <p>CU undergraduates interested in research opportunities are welcome to reach out directly.</p>
+          <a href="#" class="btn-teal-outline">Contact Us →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Geophysical &amp; Astrophysical Fluids Group · University of Colorado Boulder</p>
+    <p><a href="mailto:michael.calkins@colorado.edu">michael.calkins@colorado.edu</a></p>
+  </footer>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('flow-canvas');
+    const ctx    = canvas.getContext('2d');
+    let w, h, t = 0;
+
+    function resize() {
+      w = canvas.width  = canvas.offsetWidth;
+      h = canvas.height = canvas.offsetHeight;
+      ctx.fillStyle = 'rgb(8,15,26)';
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    function field(x, y) {
+      const nx = (x / w - 0.5) * 3.0;
+      const ny = (y / h - 0.5) * 3.0;
+      const r  = Math.sqrt(nx * nx + ny * ny) + 0.001;
+      const omega = 1.2 * Math.exp(-r * 0.5);
+      let vx = -ny * omega;
+      let vy =  nx * omega;
+      vx += 0.45 * Math.sin(ny * 1.8 + t * 0.25);
+      vy += 0.45 * Math.sin(nx * 1.8 + t * 0.18);
+      vx += 0.18 * Math.cos(nx * 3.5 - ny * 2.1 + t * 0.4);
+      vy += 0.18 * Math.sin(ny * 3.5 + nx * 2.1 - t * 0.35);
+      const env = 1.0 / (1.0 + r * r * 0.25);
+      return { vx: vx * env, vy: vy * env };
+    }
+
+    const N = 500;
+    const particles = [];
+
+    function spawn() {
+      return { x: Math.random()*w, y: Math.random()*h, px:0, py:0, life: Math.floor(Math.random()*180), maxLife: 160+Math.random()*120 };
+    }
+    function resetParticle(p) {
+      p.x = Math.random()*w; p.y = Math.random()*h; p.life = 0; p.maxLife = 160+Math.random()*120;
+    }
+    function lerp(a, b, u) { return a + (b-a)*u; }
+
+    const HMAP_COLS = 80, HMAP_ROWS = 54;
+    const offCanvas = document.createElement('canvas');
+    offCanvas.width = HMAP_COLS; offCanvas.height = HMAP_ROWS;
+    const offCtx = offCanvas.getContext('2d');
+
+    function drawSpeedBackground() {
+      const imgData = offCtx.createImageData(HMAP_COLS, HMAP_ROWS);
+      const data = imgData.data;
+      for (let row = 0; row < HMAP_ROWS; row++) {
+        for (let col = 0; col < HMAP_COLS; col++) {
+          const px = (col+0.5)/HMAP_COLS*w;
+          const py = (row+0.5)/HMAP_ROWS*h;
+          const { vx, vy } = field(px, py);
+          const u = Math.min(Math.sqrt(vx*vx+vy*vy)/1.25, 1);
+          const i = (row*HMAP_COLS+col)*4;
+          data[i]   = Math.round(lerp(5,  18,  u));
+          data[i+1] = Math.round(lerp(9,  90,  u));
+          data[i+2] = Math.round(lerp(16, 105, u));
+          data[i+3] = 255;
+        }
+      }
+      offCtx.putImageData(imgData, 0, 0);
+      ctx.filter = 'blur(18px)';
+      ctx.globalAlpha = 0.82;
+      ctx.drawImage(offCanvas, 0, 0, w, h);
+      ctx.filter = 'none';
+      ctx.globalAlpha = 1.0;
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      t += 0.006;
+      drawSpeedBackground();
+      for (const p of particles) {
+        p.px = p.x; p.py = p.y;
+        const { vx, vy } = field(p.x, p.y);
+        const spd = Math.sqrt(vx*vx+vy*vy);
+        p.x += vx*1.1; p.y += vy*1.1;
+        p.life++;
+        if (p.life > p.maxLife || p.x<-2 || p.x>w+2 || p.y<-2 || p.y>h+2) { resetParticle(p); continue; }
+        const fadeIn  = Math.min(p.life/30, 1);
+        const fadeOut = Math.min((p.maxLife-p.life)/30, 1);
+        const alpha   = fadeIn*fadeOut*0.85;
+        const u   = Math.min(spd/1.2, 1);
+        const hue = lerp(172, 198, u);
+        const sat = lerp(85,  30,  u);
+        const lig = lerp(52,  92,  u);
+        ctx.beginPath();
+        ctx.moveTo(p.px, p.py);
+        ctx.lineTo(p.x,  p.y);
+        ctx.strokeStyle = `hsla(${hue},${sat}%,${lig}%,${alpha})`;
+        ctx.lineWidth = lerp(0.6, 1.8, u);
+        ctx.stroke();
+      }
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    for (let i = 0; i < N; i++) particles.push(spawn());
+    animate();
+  })();
+  </script>
+
+</body>
+</html>
